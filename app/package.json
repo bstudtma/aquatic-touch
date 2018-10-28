@@ -1,0 +1,22 @@
+{
+  "name": "pauls-bikes",
+  "version": "0.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "express": "~4.13.3",
+    "multer": "~1.1.0",
+    "swig": "~1.4.2",
+    "cookie-parser": "~1.4.0"
+  },
+  "devDependencies": {
+    "gulp-imagemin": "~2.4.0",
+    "gulp-image-resize": "~0.7.1",
+    "gulp": "~3.9.0"
+  }
+}

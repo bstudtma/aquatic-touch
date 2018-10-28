@@ -1,0 +1,8 @@
+{
+  "uid": "bikes",
+  "watch": true,
+  "script": "server.js",
+  "append": true,
+  "workingDir": "/home/bill/public/pauls-bikes/app",
+  "sourceDir": "/home/bill/public/pauls-bikes/app"
+}
