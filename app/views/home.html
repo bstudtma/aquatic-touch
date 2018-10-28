@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Aquatic Touch</title>
+
+  <!-- Bootstrap Core CSS -->
+  <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+
+  <!-- Custom Fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css" type="text/css">
+
+  <!-- Plugin CSS -->
+  <link rel="stylesheet" href="css/animate.min.css" type="text/css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/creative.css" type="text/css">
+
+  <!-- <script src="http://cdn.ckeditor.com/4.4.7/standard-all/ckeditor.js"></script> -->
+  <!-- <script type="text/javascript" src="http://cdn.jsdelivr.net/jquery/2.1.4/jquery.min.js"></script> -->
+  <!-- <script src="js/jquery.js"></script> -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <!-- <script src="js/ckeditor.js"></script> -->
+  <!-- <script src="https://cdn.ckeditor.com/4.4.7/standard-all/ckeditor.js"></script> -->
+  <!-- <script src="//cdn.ckeditor.com/4.4.7/standard/ckeditor.js"></script> -->
+  <script src="//cdn.ckeditor.com/4.5.6/standard/ckeditor.js"></script>
+  <script type="text/javascript" src="/js/local-ckeditor.js"></script>
+  <script>
+
+  function resize() {
+
+    // if window height is less than div height, then set div min height to div height, else set to 100%
+
+    if ($(window).height()<$("#header").outerHeight(true)){
+      $("header").css("min-height",($("#header").outerHeight(true)+"px"))
+    }
+    else {
+      $("header").css("min-height","100%")
+    }
+
+
+    $("#myCarousel img").css("max-height", function (index) {
+      console.log($(window).height());
+      return $(window).height() - 50;
+      // return $(window).height();
+    });
+  }
+    function loadAlbum(album) {
+      $("#album-slides").empty();
+      $("#album-indicators").empty();
+      $("#myCarousel").carousel("pause").removeData();
+      // get photos from album
+      // https://picasaweb.google.com/data/feed/api/user/bstudtma/album/DevilSLakeClimbingTrip?kind=photo&alt=json
+      // var album_url="https://picasaweb.google.com/data/feed/api/user/srs107/album/"+ album +"?kind=photo&alt=json"
+      var album_url="//picasaweb.google.com/data/feed/api/user/srs107/album/"+ album +"?kind=photo&alt=json"
+      // data.feed.entry[0].content.src
+      // var img_src = json.feed.entry[i].content.src.split('/');
+      // var img_filename = img_src.pop();
+      // var img_src = img_src.join('/');
+      // var screen_width = $(window).width();
+      // img_src + '/s' + screen_width + '/' + img_filename
+      $.getJSON(album_url, function (data) {
+      // $.getJSON("albums/" + album + "/photos", function (data) {
+        console.log(data);
+        var count = -1;
+        $.each(data.feed.entry, function (key, val) {
+          count = count + 1;
+          console.log(key);
+
+
+          var img_src = val.content.src.split('/');
+          var img_filename = img_src.pop();
+          var img_src = img_src.join('/');
+          var screen_width = $(window).width();
+          img_src = img_src + '/s' + screen_width + '/' + img_filename
+
+          console.log(val)
+          var tmp = $("<img>", {
+            src: img_src
+          });
+          // src: "img/albums/" + album + "/" + val
+          var tmp2 = $("<div>", {
+            class: "item"
+          });
+          if (count == 0) {
+            $(tmp2).addClass("active");
+            //                  $(tmp3).addClass("active");
+          }
+
+          $(tmp).css("max-height", $(window).height() - 100);
+          tmp2.append(tmp);
+          $("#album-slides").append(tmp2);
+          var tmp3 = $("<li>", {
+            "data-target": "#myCarousel",
+            "data-slide-to": "" + count
+          });
+          if (count == 0) {
+            //                  $(tmp2).addClass("active");
+            $(tmp3).addClass("active");
+          }
+          $("#album-indicators").append(tmp3);
+          //                                                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+
+        });
+      });
+      //load files
+      //            <div class="item active">
+      //          <img src="img/albums/Alaska/DSC_0073.jpg" alt="Chania">
+      //        </div>
+
+      $("#myCarousel").carousel(0);
+      $('#myCarousel').carousel({
+        interval: 3000,
+        cycle: true
+      });
+      return true;
+    }
+    // $(window).load(function () {resize();});
+    $(document).ready(function () {
+      console.log('document ready')
+      $(window).load(function () {window.setTimeout(resize,1000)});
+
+      $(".service-box p").attr("contenteditable", "false");
+      $(".service-box h3").attr("contenteditable", "false");
+      console.log("User ready", user);
+      if (user) {
+        localckeditor(true);
+        $("#login-nav").text("Logout");
+      }
+      $.getJSON("https://picasaweb.google.com/data/feed/api/user/srs107/album/aquatictouchhome?kind=photo&alt=json",function(json){
+        console.log(json);
+        console.log(json.feed.entry[0].content.src);
+
+        var img_src = json.feed.entry[0].content.src;
+        var img_src = img_src.split('/');
+        var img_filename = img_src.pop();
+        var img_src = img_src.join('/');
+        var screen_width = $(window).width();
+        if (screen_width<600) {screen_width=screen_width*2;}
+        img_src = img_src + '/s' + screen_width + '/' + img_filename
+        // $("header").
+        $('header').css('background-image', 'url(' + img_src + ')');
+      });
+      // loadAlbum('Tanks');
+      // $.getJSON("albums/all/photos", function (data) {
+        //        albums = data;
+        var data = ["Tanks","Corals","Fish"];
+        var count = -1;
+        $.each(data, function (key, val) {
+          count = count + 1;
+          console.log(val);
+          //var tmp = "<button type='button' class='btn btn-default'>" + val.title + "</button>"
+          //var tmp = "<li role='presentation' class=''><a href='#portfolio'>" + val.title + "</a></li>";
+          var tmp2 = $("<a>", {
+            href: "#portfolio",
+            html: val,
+            class: "page-scroll2"
+          });
+          tmp2.click(function () {
+            console.log(this.innerHTML);
+            var album = this.innerHTML;
+            $("#album-btn-group > li").removeClass("active");
+            $("#album-btn-group > li").each(function () {
+              var listItem = this;
+
+              $(this).children("a").each(function () {
+                if (this.innerHTML == album) $(listItem).addClass("active");
+              });
+            });
+            return loadAlbum(album);
+            //            $("#album-btn-group > li > a").each(function (key, val) {
+            //              console.log(val.innerHTML);
+            //              if (val.innerHTML == album) $(val).addClass("active");
+          });
+
+          var tmp = $("<li>", {
+            role: "presentation"
+          });
+          if (count == 0) tmp.addClass("active");
+          tmp.append(tmp2);
+          $("#album-btn-group").append(tmp);
+          // if (count == 0) loadAlbum(val);
+        });
+        $('a.page-scroll2').bind('click', function (event) {
+          var $anchor = $(this);
+          $('html, body').stop().animate({
+            scrollTop: ($($anchor.attr('href')).offset().top - 50)
+          }, 1250, 'easeInOutExpo');
+          event.preventDefault();
+        });
+
+        //        $("#album-btn-group > li > a:first").click();
+      // });
+
+      $("#album-btn-group > li > a:first").click();
+
+      $("#album-btn-group > li > a").click(function () {
+        console.log(this);
+      });
+
+      $("#myCarousel img").css("max-height", function (index) {
+        console.log($(window).height());
+        return $(window).height() - 100;
+      });
+      resize();
+      $(window).resize(resize);
+      // $("form").submit(function (event) {
+      //   console.log("submitted");
+      //   console.log($("#username").val());
+      //   console.log($("#password").val());
+      //   //$.post('/login', $(this).serialize(), console.log("success")).error('ouch');
+      //   //      $.get('/login',
+      //   //        $.ajax({
+      //   //          url: "/login",
+      //   //          async: false,
+      //   //          username: $("#username").val(),
+      //   //          password: $("#password").val(),
+      //   //          dataType: 'html',
+      //   //          success: function (res) {
+      //   //            console.log(res);
+      //   //            $("#logout").removeClass("hide");
+      //   //            $("#login").addClass("hide");
+      //   //            localckeditor(true);
+      //   //          }
+      //   //        });
+      //   console.log(window.location.pathname);
+      //   console.log(window.location.href);
+      //   console.log(window.location);
+      //   //          var pathname = window.location.pathname; // Returns path only
+      //   //var url      = window.location.href;     // Returns full URL
+      //   $.ajax({
+      //     type: "POST",
+      //     data: {
+      //       username: $("#username").val(),
+      //       password: $("#password").val()
+      //     },
+      //     //          url: "/login",
+      //     url: "https://45.55.78.9/login",
+      //     async: false,
+      //     //        username: $("#username").val(),
+      //     //        password: $("#password").val(),
+      //     dataType: 'json',
+      //     success: function (res) {
+      //       console.log(res);
+      //       $("#logout").removeClass("hide");
+      //       $("#login").addClass("hide");
+      //       localckeditor(true);
+      //       $("#login-nav").text("Logout");
+      //     }
+      //   });
+      //   $("#username").val('');
+      //   //        console.log($("#username").val());
+      //   $("#password").val('');
+      //   return false;
+      // });
+
+      $("#login-nav").click(function () {
+        if ($("#login-nav").text() === "Login") return true;
+        //        $("#logout > div > a").click();
+        $.ajax({
+          url: "/logout",
+          async: false,
+          //          username: $("#username").val(),
+          //          password: $("#password").val(),
+          //          dataType: 'html',
+          success: function (res) {
+            console.log(res);
+            //            $("#logout").addClass("hide");
+            //            $("#login").removeClass("hide");
+            localckeditor(false);
+            user = "";
+            $("#login-nav").text("Login");
+          }
+        });
+
+        return false;
+      });
+
+      //      $("#logout > div > a").click(function () {
+      //
+      //        $.ajax({
+      //          url: "/logout",
+      //          async: false,
+      //          //          username: $("#username").val(),
+      //          //          password: $("#password").val(),
+      //          //          dataType: 'html',
+      //          success: function (res) {
+      //            console.log(res);
+      //            $("#logout").addClass("hide");
+      //            $("#login").removeClass("hide");
+      //            localckeditor(false);
+      //            $("#login-nav").text("Login");
+      //          }
+      //        });
+      //
+      //
+      //        //      $.ajax({
+      //        //        url: "/login", //$(this).attr('action'),
+      //        //        type: "GET",
+      //        //        data: $(this).serialize(),
+      //        //        //        username: $("#email").val(), //password: $("#password").val(),
+      //        //        success: function (data) {
+      //        //          //var data = JSON.parse(jsondata);
+      //        //          console.log("success");
+      //        //        },
+      //        //        error: function (xhr, ajaxOptions, thrownError) { //Add these parameters to display the required response
+      //        //          //          alert(xhr.status);;
+      //        //          console.log(xhr);
+      //        //          console.log(ajaxOptions);
+      //        //          console.log(thrownError);
+      //        //        }
+      //        //      });
+      //        return false;
+      //      });
+      console.log("fade in begin");
+      $('body').delay(300).show();
+      console.log("fade in end");
+      console.log("User: ", user);
+    });
+  </script>
+
+  <style>
+    .carousel-inner > .item > img,
+    .carousel-inner > .item > a > img {
+      /*      width: 100%;*/
+
+      margin: auto;
+      /*      min-width: 100%; min-height: 300px; margin: auto; .carousel.slide { max-width: 1600px; //the largest you want the image to stretch min-width: 900px; //the "container" width overflow: hidden; } .carousel-inner { width: 1600px; left: 50%; margin-left: -800px;*/
+    }
+  }
+  </style>
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body id="page-top">
+  <script>
+    document.body.style.display = "none";
+    var user = "{{ user }}"
+  </script>
+
+  <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand page-scroll" href="#page-top">
+          <!--          <p><img src="img/bre-compass-logo.svg">-->
+          Aquatic Touch
+          <!--          </p>-->
+        </a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-right">
+          <li id="my-nav-top">
+            <a class="page-scroll" href="#page-top">Home</a>
+          </li>
+          <li>
+            <a class="page-scroll" href="#about">About</a>
+          </li>
+          <li>
+            <a class="page-scroll" href="#services">Services</a>
+          </li>
+          <li>
+            <a class="page-scroll" href="#portfolio">Portfolio</a>
+          </li>
+          <li>
+            <a class="page-scroll" href="#contact">Contact</a>
+          </li>
+          <li>
+            <a id="login-nav" class="" href="/login">Login</a>
+          </li>
+        </ul>
+
+
+      </div>
+      <!--      <button type="button" class="btn btn-default navbar-btn navbar-right">Sign in</button>-->
+
+      <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container-fluid -->
+  </nav>
+
+  <header>
+    <div class="header-content" id="header">
+      <div class="header-content-inner">
+        <!-- <img class="wow rubberBand animated" data-wow-delay="300ms" data-wow-iteration="infinite" data-wow-duration="2s" style="visibility: visible; -webkit-animation: pulse 2s 300ms infinite;" src="/images/logo.png" width="200"> -->
+        <img class="wow rubberBand" data-wow-delay="300ms" data-wow-iteration="infinite" data-wow-duration="2s" style="" src="/images/logo.png" width="200">
+        <div id="header-content-inner" contenteditable="false" style="text-shadow: 0px 0px 8px #FF0000; margin-top: 20px">
+
+          {% autoescape false %}{{ content['header-content-inner'] }}{% endautoescape %}
+        </div>
+        <a href="#about" class="btn btn-primary btn-xl page-scroll" style="margin:50px">Find Out More</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="bg-primary" id="about">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 text-center">
+          <img src="/images/steve.png" class="wow bounceIn img-circle" style="width: 300px; padding-bottom: 40px">
+          <div id="home-main-content" contenteditable="false">
+
+            {% autoescape false %}{{ content['home-main-content'] }}{% endautoescape %}
+            <!--
+            <h2 class="section-heading">We've got what you need!</h2>
+<hr class="light">
+<p class="text-faded">Start Bootstrap has everything you need to get your new website up and running in no time! All of the templates and themes on Start Bootstrap are open source, free to download, and easy to use. No strings attached!</p>
+-->
+          </div>
+          <a href="#services" class="btn btn-default btn-xl page-scroll">Get Started!</a>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section id="services">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12 text-center">
+          <h2 class="section-heading" contenteditable="false" id="home-section3-title">{% autoescape false %}{{ content['home-section3-title'] }}{% endautoescape %}</h2>
+          <hr class="primary">
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4 text-center">
+          <div class="service-box">
+            <i class="fa fa-4x fa-bullseye wow bounceIn text-primary"></i>
+            <h3 id="home-service-1">{% autoescape false %}{{ content['home-service-1'] }}{% endautoescape %}</h3>
+            <p id="home-service-p-1" class="text-muted">{% autoescape false %}{{ content['home-service-p-1'] }}{% endautoescape %}</p>
+          </div>
+        </div>
+        <div class="col-lg-4  text-center">
+          <div class="service-box">
+            <i class="fa fa-4x fa-sitemap wow bounceIn text-primary" data-wow-delay=".1s"></i>
+            <h3 id="home-service-2">{% autoescape false %}{{ content['home-service-2'] }}{% endautoescape %}</h3>
+            <p id="home-service-p-2" class="text-muted">{% autoescape false %}{{ content['home-service-p-2'] }}{% endautoescape %}</p>
+          </div>
+        </div>
+        <div class="col-lg-4 text-center">
+          <div class="service-box">
+            <i class="fa fa-4x fa-clipboard wow bounceIn text-primary" data-wow-delay=".2s"></i>
+            <h3 id="home-service-3">{% autoescape false %}{{ content['home-service-3'] }}{% endautoescape %}</h3>
+            <p id="home-service-p-3" class="text-muted">{% autoescape false %}{{ content['home-service-p-3'] }}{% endautoescape %}</p>
+          </div>
+        </div>
+        <!-- <div class="col-lg-3  text-center">
+          <div class="service-box">
+            <i class="fa fa-4x fa-binoculars wow bounceIn text-primary" data-wow-delay=".3s"></i>
+            <h3 id="home-service-4">{% autoescape false %}{{ content['home-service-4'] }}{% endautoescape %}</h3>
+            <p id="home-service-p-4" class="text-muted">{% autoescape false %}{{ content['home-service-p-4'] }}{% endautoescape %}</p>
+          </div>
+        </div> -->
+      </div>
+      <!-- <div class="row">
+
+        <div class="col-lg-3 text-center">
+          <div class="service-box">
+            <i class="fa fa-4x fa-usd wow bounceIn text-primary" data-wow-delay=".3s"></i>
+            <h3 id="home-service-5">{% autoescape false %}{{ content['home-service-5'] }}{% endautoescape %}</h3>
+            <p id="home-service-p-5" class="text-muted">{% autoescape false %}{{ content['home-service-p-5'] }}{% endautoescape %}</p>
+          </div>
+        </div>
+        <div class="col-lg-3 text-center">
+          <div class="service-box">
+            <i class="fa fa-4x fa-long-arrow-down wow bounceIn text-primary" data-wow-delay=".3s"></i>
+            <h3 id="home-service-6">{% autoescape false %}{{ content['home-service-6'] }}{% endautoescape %}</h3>
+            <p id="home-service-p-6" class="text-muted">{% autoescape false %}{{ content['home-service-p-6'] }}{% endautoescape %}</p>
+          </div>
+        </div>
+        <div class="col-lg-3 text-center">
+          <div class="service-box">
+            <i class="fa fa-4x fa-database wow bounceIn text-primary" data-wow-delay=".3s"></i>
+            <h3 id="home-service-7">{% autoescape false %}{{ content['home-service-7'] }}{% endautoescape %}</h3>
+            <p id="home-service-p-7" class="text-muted">{% autoescape false %}{{ content['home-service-p-7'] }}{% endautoescape %}</p>
+          </div>
+        </div>
+        <div class="col-lg-3 text-center">
+          <div class="service-box">
+            <i class="fa fa-4x fa-pie-chart wow bounceIn text-primary" data-wow-delay=".3s"></i>
+            <h3 id="home-service-8">{% autoescape false %}{{ content['home-service-8'] }}{% endautoescape %}</h3>
+            <p id="home-service-p-8" class="text-muted">{% autoescape false %}{{ content['home-service-p-8'] }}{% endautoescape %}</p>
+          </div>
+        </div>
+      </div> -->
+    </div>
+    <div class="container" style="margin-top:50px">
+      <div class="row">
+        <div class="col-lg-12 text-center">
+          <!--          <a href="#services" class="btn btn-default btn-xl page-scroll">Check us out!</a>-->
+          <a href="#portfolio" class="btn btn-primary btn-xl page-scroll">Check out my work!</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!--
+  <section class="no-padding" id="portfolio">
+    <div id="home-portfolio" class="container-fluid">
+      <div class="row no-gutter">
+        <div class="col-lg-4 col-sm-6">
+          <a href="#" class="portfolio-box">
+            <img src="img/portfolio/1.jpg" class="img-responsive" alt="">
+            <div class="portfolio-box-caption">
+              <div class="portfolio-box-caption-content">
+                <div class="project-category text-faded">
+                  Category
+                </div>
+                <div class="project-name">
+                  Project Name
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-lg-4 col-sm-6">
+          <a href="#" class="portfolio-box">
+            <img src="img/portfolio/2.jpg" class="img-responsive" alt="">
+            <div class="portfolio-box-caption">
+              <div class="portfolio-box-caption-content">
+                <div class="project-category text-faded">
+                  Category
+                </div>
+                <div class="project-name">
+                  Project Name
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-lg-4 col-sm-6">
+          <a href="#" class="portfolio-box">
+            <img src="img/portfolio/3.jpg" class="img-responsive" alt="">
+            <div class="portfolio-box-caption">
+              <div class="portfolio-box-caption-content">
+                <div class="project-category text-faded">
+                  Category
+                </div>
+                <div class="project-name">
+                  Project Name
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-lg-4 col-sm-6">
+          <a href="#" class="portfolio-box">
+            <img src="img/Boreal_1440.jpg" class="img-responsive" alt="">
+            <div class="portfolio-box-caption">
+              <div class="portfolio-box-caption-content">
+                <div class="project-category text-faded">
+                  Category
+                </div>
+                <div class="project-name">
+                  Project Name
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-lg-4 col-sm-6">
+          <a href="#" class="portfolio-box">
+            <img src="img/portfolio/5.jpg" class="img-responsive" alt="">
+            <div class="portfolio-box-caption">
+              <div class="portfolio-box-caption-content">
+                <div class="project-category text-faded">
+                  Category
+                </div>
+                <div class="project-name">
+                  Project Name
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="col-lg-4 col-sm-6">
+          <a href="#" class="portfolio-box">
+            <img src="img/portfolio/6.jpg" class="img-responsive" alt="">
+            <div class="portfolio-box-caption">
+              <div class="portfolio-box-caption-content">
+                <div class="project-category text-faded">
+                  Category
+                </div>
+                <div class="project-name">
+                  Project Name
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+-->
+
+  <div id="portfolio" class="container" style="padding:0px;width:100%">
+
+    <div style="text-align:center">
+      <!--
+      <div id="album-btn-group" class="btn-group" role="group" aria-label="..." style="display:inline-block">
+        <button type="button" class="btn btn-default">Alaska</button>
+        <button type="button" class="btn btn-default">New Jersey</button>
+        <button type="button" class="btn btn-default">Right</button>
+      </div>
+--><ul id="album-btn-group" style="display:inline-block" class="nav nav-pills">
+      <!-- <ul id="album-btn-group" style="display:none; visibility: hidden;" class="nav nav-pills"> -->
+        <!-- <ul id="album-btn-group" style="display:inline-block; visibility: hidden;" class="nav nav-pills"> -->
+
+<!-- <li role="presentation" class="active"><a href="#">Tanks</a>
+</li>
+<li role="presentation"><a href="#">Corals</a>
+</li>
+<li role="presentation"><a href="#">Fish</a>
+</li> -->
+      </ul>
+    </div>
+
+
+    <div id="myCarousel" class="carousel slide" data-ride="carousel">
+      <!-- Indicators -->
+      <ol id="album-indicators" class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <!--
+      <li data-target="#myCarousel" data-slide-to="2"></li>
+      <li data-target="#myCarousel" data-slide-to="3"></li>
+-->
+      </ol>
+
+      <!-- Wrapper for slides -->
+      <div id="album-slides" class="carousel-inner" role="listbox">
+        <div class="item active">
+          <img src="" alt="">
+        </div>
+
+        <div class="item">
+          <img src="" alt="">
+        </div>
+
+        <!--
+      <div class="item">
+        <img src="img_flower.jpg" alt="Flower" width="460" height="345">
+      </div>
+
+      <div class="item">
+        <img src="img_flower2.jpg" alt="Flower" width="460" height="345">
+      </div>
+-->
+      </div>
+
+      <!-- Left and right controls -->
+      <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- <aside class="bg-dark">
+    <div class="container text-center">
+      <div class="call-to-action">
+        <h2 id="index-brochure-h2" contenteditable="false">{% autoescape false %}{{ content['index-brochure-h2'] }}{% endautoescape %}</h2>
+        <a href="#" class="btn btn-default btn-xl wow tada">Download Now!</a>
+      </div>
+    </div>
+  </aside> -->
+
+  <section id="contact">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 text-center">
+          <h2 class="section-heading" id="index-get-in-touch-h2" contenteditable="false">{% autoescape false %}{{ content['index-get-in-touch-h2'] }}{% endautoescape %}</h2>
+          <hr class="primary">
+          <p id="index-get-in-touch" contenteditable="false">{% autoescape false %}{{ content['index-get-in-touch'] }}{% endautoescape %}</p>
+        </div>
+        <div class="col-lg-4 col-lg-offset-2 text-center">
+          <i class="fa fa-phone fa-3x wow bounceIn"></i>
+          <p id="index-phone" contenteditable="false">{% autoescape false %}{{ content['index-phone'] }}{% endautoescape %}</p>
+        </div>
+        <div class="col-lg-4 text-center">
+          <i class="fa fa-envelope-o fa-3x wow bounceIn" data-wow-delay=".1s"></i>
+          <p><a href="mailto:srs107@gmail.com">srs107@gmail.com</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- jQuery -->
+  <!-- <script src="js/jquery.js"></script> -->
+
+  <!-- Bootstrap Core JavaScript -->
+  <script src="js/bootstrap.min.js"></script>
+
+  <!-- Plugin JavaScript -->
+  <script src="js/jquery.easing.min.js"></script>
+  <script src="js/jquery.fittext.js"></script>
+  <script src="js/wow.min.js"></script>
+
+  <!-- Custom Theme JavaScript -->
+  <script src="js/creative.js"></script>
+
+</body>
+
+</html>
